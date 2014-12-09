@@ -88,7 +88,7 @@ var senolaUtils = {
         var xhr = senolaUtils.createXHR(); //获取xhr对象
         obj.url = obj.url; // 清除缓存
         obj.data = senolaUtils.paramsEscape(obj.data); // 转义字符串
-        if(obj.method === "get"){      // 判断使用的是否是get方式发送
+        if(obj.method === "get" || obj.method === "GET"){      // 判断使用的是否是get方式发送
             obj.url += obj.url.indexOf("?") == "-1" ? "?" + obj.data : "&" + obj.data;
         }
         // 异步
@@ -102,7 +102,7 @@ var senolaUtils = {
             }
         }
         xhr.open(obj.method, obj.url, obj.async);  // false是同步 true是异步 // "demo.php?rand="+Math.random()+"&name=ga&ga",
-        if(obj.method === "post"){
+        if(obj.method === "post" || obj.method === "POST"){
             xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
             xhr.send(obj.data);
         }else{
@@ -145,7 +145,7 @@ var senolaUtils = {
         }else{
             throw new Error("您的系统或浏览器不支持XHR对象！");
         }
-    }
+    },
     /**
      *  转义字符
      **/
@@ -155,7 +155,7 @@ var senolaUtils = {
             arr.push(encodeURIComponent(i) + "=" + encodeURIComponent(data[i]));
         }
         return arr.join("&");
-    }
+    },
     /**
      *  获取[under,over]之间的随机数。若只传入一个参数num则返回的结果表示[0,num]间的随机数
      **/
@@ -168,5 +168,39 @@ var senolaUtils = {
             default:
                 return 1;
         }
+    },
+    /**
+     *  获取[startTime,endTime]时间段之间相差的minutes
+     **/
+    getMinutesDiff: function(startTime, endTime) {
+        var minutesDiff = endTime.getTime() - startTime.getTime(); 
+        return Math.round(minutesDiff / 1000 * 60);
+    },
+    /**
+     *  获取[startTime,endTime]时间段之间相差的month
+     **/
+    getMonthsDiff: function(startTime, endTime) {
+        var monthsdiff;
+        monthsdiff = (endTime.getFullYear() - startTime.getFullYear()) * 12;
+        monthsdiff -= startTime.getMonth() + 1;
+        monthsdiff += endTime.getMonth();
+        if(endTime.getDate() >= startTime.getDate()) {
+            months++
+        }
+        return monthsdiff <= 0 ? 0 : monthsdiff;
+    },
+    /**
+     *  获取[startTime,endTime]时间段之间相差的day
+     **/
+    getDaysDiff: function(startTime, endTime) {
+        var timeDiff = Math.abs(endTime.getTime() - startTime.getTime());
+        return Math.cell(timeDiff / (1000 * 60 * 60 * 24));
+    },
+    /**
+     *  获取[startTime,endTime]时间段之间相差的hours
+     **/
+    getHoursDiff: function(startTime, endTime) {
+        var timeDiff = Math.abs(endTime.getTime() - startTime.getTime());
+        return Math.cell(timeDiff / (1000 * 60 * 60));
     }
 }
