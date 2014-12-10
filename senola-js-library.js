@@ -202,5 +202,26 @@ var senolaUtils = {
     getHoursDiff: function(startTime, endTime) {
         var timeDiff = Math.abs(endTime.getTime() - startTime.getTime());
         return Math.cell(timeDiff / (1000 * 60 * 60));
+    },
+    /**
+     *  抓取网页上所有图片地址
+     **/
+    getSitePictures: function() {
+        var pictures = document.images;
+        var images = [];
+        for(var i = 0, j = pictures.length; i < j; i ++){
+            images.push(pictures[i].currentSrc);
+        }
+        return images;
+    },
+    /**
+     *  获取浏览器的尺寸（浏览器的视口，不包括工具栏和滚动条）。
+     *  兼容所有浏览器,Internet Explorer(5+)、Chrome、Firefox、Opera 以及 Safari：
+     *  return : [width, height]
+     **/
+    getWindowSize: function() {
+        var _w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        var _h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+        return new Array(_w, _h);
     }
 }
