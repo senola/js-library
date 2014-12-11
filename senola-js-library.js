@@ -31,7 +31,7 @@ var senolaUtils = {
     /**
      *  获取js宿主环境信息
      **/
-    versions: function() {
+    getversionsInfo: function() {
         var u = window.navigator.userAgent,
             app = window.navigator.appVersion;
         return {
@@ -48,7 +48,26 @@ var senolaUtils = {
             webApp: u.indexOf('Safari') == -1
         };
     }(),
-
+    /**
+     * 获取移动端OS系统名及系统版本号
+     * return一个数组，[系统名，系统版本]，如["iPhone", "iPhone OS 7_0"] 
+     **/
+    getOsVersion: function() {
+        var osInfo = [];
+        var u = window.navigator.userAgent,
+            app = window.navigator.appVersion;
+        if(u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)){
+          osInfo.push("iPhone");
+          osInfo.push(navigator.appVersion.match(/iPhone OS (\d+)_(\d+)_?(\d+)?/)[0]);
+        }else if(u.indexOf('Android') > -1){
+          osInfo.push("Android");
+          osInfo.push(navigator.userAgent.match(/Android (\d+(?:\.\d+)+)/)[0]);
+        }else {
+          osInfo.push("others");
+          osInfo.push("others");
+        }
+        return osInfo;
+    },
     /**
      *   判断是否是PC端，返回true表示“是”，返回false,表示“否”
      **/
