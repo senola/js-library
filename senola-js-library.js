@@ -242,5 +242,23 @@ var senolaUtils = {
         var _w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
         var _h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
         return new Array(_w, _h);
+    },
+    /**
+     *  删除字符串两端的空白字符并返回
+     *  javascript 1.81引入了 String.prototype.trim()
+     *  但该属性有兼容性：支持Firefox (Gecko) 3.5+, chrome, Internet Explorer 9+, Opera 10.5+,Safari 5+
+     *  为了增强兼容性可增加如下函数
+     **/
+    addTrimForString: function() {
+        // trim polyfill : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim
+        if (!String.prototype.trim) {
+              (function() {
+                // Make sure we trim BOM and NBSP
+                var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+                String.prototype.trim = function() {
+                  return this.replace(rtrim, '');
+                };
+              })();
+        }
     }
 }
