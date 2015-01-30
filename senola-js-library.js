@@ -260,5 +260,18 @@ var senolaUtils = {
                 };
               })();
         }
+    },
+    /**
+     *  检查手机号码的合法性：
+     *  支持13, 14, 15, 17, 18 开头的11位手机号，可做相应扩展
+     *  返回true 表示合法，false表示不合法
+     */
+    checkPhoneNum: function(phone) {
+        var patrn = /^1[3|4|5|7|8][0-9]{9}$/;
+        if(!(patrn.test(phone))) {
+            return true;
+        } 
+        return false;
     }
+
 }
