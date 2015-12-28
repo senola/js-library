@@ -272,6 +272,48 @@ var senolaUtils = {
             return true;
         } 
         return false;
-    }
+    },
+    /**
+     *  返回某个指定的数组在字符串中首次出现的位置
+     *  <= IE8下不支持indexOf
+     */
+     addIndexOfForArray: function() {
+        if(!Array.prototype.indexOf) {
+            Array.prototype.indexOf = function() {
+                for (var i = 0, l = this.length; i < l; i++) {
+                    if(i in this && this[i] === item) return i;
+                }
+                return -1;
+            }
+        }
+     },
+     /**
+      *  获取请求动画帧API
+      *  <= IE9、Opera MIni 8、android Browser4.1、4.3 不支持改API
+      *  不支持的情况下通过采用setIimeout API代替
+      */
+     getRequestAnimationFrame: function() {
+        var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+        if(requestAnimationFrame == null) {
+            requestAnimationFrame = function(fn) {
+               setTimeout(fn, 50);
+            }
+        }
+        return requestAnimationFrame;
+     },
+     /**
+      *  获取消动画帧API
+      *  <= IE9、Opera MIni 8、android Browser4.1、4.3 不支持改API
+      *  不支持的情况下通过采用clearTimeout API代替
+      */
+     getCancelAnimationFrame: function() {
+        var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+        if(cancelAnimationFrame == null) {
+            cancelAnimationFrame = function(id) {
+                clearTimeout(id);
+            }
+        } 
+        return cancelAnimationFrame;
+     }
 
 }
