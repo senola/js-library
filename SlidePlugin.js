@@ -8,62 +8,247 @@
 		// 确保SlidePlugin实例已创建
 		if(!(this instanceof SlidePlugin)) return new SlidePlugin(container, params);
 
-        var defaults = {};
-        var initialVirtualTranslate = params && params.virtualTranslate;
+        //默认参数配置
+        var defaults = {
+            direction: 'horizontal',  // 默认滑动方向
+            touchEventsTarget: 'container', // 滑动事件作用的对象
+            initialSlide: 0, 
+            speed: 300,
+            // autoplay
+            autoplay: false,
+            autoplayDisableOnInteraction: true,
+            // To support iOS's swipe-to-go-back gesture (when being used in-app, with UIWebView).
+            iOSEdgeSwipeDetection: false,
+            iOSEdgeSwipeThreshold: 20,
+            // Free mode
+            freeMode: false,
+            freeModeMomentum: true,
+            freeModeMomentumRatio: 1,
+            freeModeMomentumBounce: true,
+            freeModeMomentumBounceRatio: 1,
+            freeModeSticky: false,
+            freeModeMinimumVelocity: 0.02,
+            // Autoheight
+            autoHeight: false,
+            // Set wrapper width
+            setWrapperSize: false,
+            // Virtual Translate
+            virtualTranslate: false,
+            // Effects
+            effect: 'slide', // 'slide' or 'fade' or 'cube' or 'coverflow'
+            coverflow: {
+                rotate: 50,
+                stretch: 0,
+                depth: 100,
+                modifier: 1,
+                slideShadows : true
+            },
+            cube: {
+                slideShadows: true,
+                shadow: true,
+                shadowOffset: 20,
+                shadowScale: 0.94
+            },
+            fade: {
+                crossFade: false
+            },
+            // Parallax
+            parallax: false,
+            // Scrollbar
+            scrollbar: null,
+            scrollbarHide: true,
+            scrollbarDraggable: false,
+            scrollbarSnapOnRelease: false,
+            // Keyboard Mousewheel
+            keyboardControl: false,
+            mousewheelControl: false,
+            mousewheelReleaseOnEdges: false,
+            mousewheelInvert: false,
+            mousewheelForceToAxis: false,
+            mousewheelSensitivity: 1,
+            // Hash Navigation
+            hashnav: false,
+            // Breakpoints
+            breakpoints: undefined,
+            // Slides grid
+            spaceBetween: 0,
+            slidesPerView: 1,
+            slidesPerColumn: 1,
+            slidesPerColumnFill: 'column',
+            slidesPerGroup: 1,
+            centeredSlides: false,
+            slidesOffsetBefore: 0, // in px
+            slidesOffsetAfter: 0, // in px
+            // Round length
+            roundLengths: false,
+            // Touches
+            touchRatio: 1,
+            touchAngle: 45,
+            simulateTouch: true,
+            shortSwipes: true,
+            longSwipes: true,
+            longSwipesRatio: 0.5,
+            longSwipesMs: 300,
+            followFinger: true,
+            onlyExternal: false,
+            threshold: 0,
+            touchMoveStopPropagation: true,
+            // Pagination
+            pagination: null,
+            paginationElement: 'span',
+            paginationClickable: false,
+            paginationHide: false,
+            paginationBulletRender: null,
+            // Resistance
+            resistance: true,
+            resistanceRatio: 0.85,
+            // Next/prev buttons
+            nextButton: null,
+            prevButton: null,
+            // Progress
+            watchSlidesProgress: false,
+            watchSlidesVisibility: false,
+            // Cursor
+            grabCursor: false,
+            // Clicks
+            preventClicks: true,
+            preventClicksPropagation: true,
+            slideToClickedSlide: false,
+            // Lazy Loading
+            lazyLoading: false,
+            lazyLoadingInPrevNext: false,
+            lazyLoadingOnTransitionStart: false,
+            // Images
+            preloadImages: true,
+            updateOnImagesReady: true,
+            // loop
+            loop: false,
+            loopAdditionalSlides: 0,
+            loopedSlides: null,
+            // Control
+            control: undefined,
+            controlInverse: false,
+            controlBy: 'slide', //or 'container'
+            // Swiping/no swiping
+            allowSwipeToPrev: true,
+            allowSwipeToNext: true,
+            swipeHandler: null, //'.swipe-handler',
+            noSwiping: true,
+            noSwipingClass: 'swiper-no-swiping',
+            // NS
+            slideClass: 'swiper-slide',
+            slideActiveClass: 'swiper-slide-active',
+            slideVisibleClass: 'swiper-slide-visible',
+            slideDuplicateClass: 'swiper-slide-duplicate',
+            slideNextClass: 'swiper-slide-next',
+            slidePrevClass: 'swiper-slide-prev',
+            wrapperClass: 'swiper-wrapper',
+            bulletClass: 'swiper-pagination-bullet',
+            bulletActiveClass: 'swiper-pagination-bullet-active',
+            buttonDisabledClass: 'swiper-button-disabled',
+            paginationHiddenClass: 'swiper-pagination-hidden',
+            // Observer
+            observer: false,
+            observeParents: false,
+            // Accessibility
+            a11y: false,
+            prevSlideMessage: 'Previous slide',
+            nextSlideMessage: 'Next slide',
+            firstSlideMessage: 'This is the first slide',
+            lastSlideMessage: 'This is the last slide',
+            paginationBulletMessage: 'Go to slide {{index}}',
+            // Callbacks
+            runCallbacksOnInit: true
+            /*
+            Callbacks:
+            onInit: function (swiper)
+            onDestroy: function (swiper)
+            onClick: function (swiper, e)
+            onTap: function (swiper, e)
+            onDoubleTap: function (swiper, e)
+            onSliderMove: function (swiper, e)
+            onSlideChangeStart: function (swiper)
+            onSlideChangeEnd: function (swiper)
+            onTransitionStart: function (swiper)
+            onTransitionEnd: function (swiper)
+            onImagesReady: function (swiper)
+            onProgress: function (swiper, progress)
+            onTouchStart: function (swiper, e)
+            onTouchMove: function (swiper, e)
+            onTouchMoveOpposite: function (swiper, e)
+            onTouchEnd: function (swiper, e)
+            onReachBeginning: function (swiper)
+            onReachEnd: function (swiper)
+            onSetTransition: function (swiper, duration)
+            onSetTranslate: function (swiper, translate)
+            onAutoplayStart: function (swiper)
+            onAutoplayStop: function (swiper),
+            onLazyImageLoad: function (swiper, slide, image)
+            onLazyImageReady: function (swiper, slide, image)
+            */
+        };
 
-        params = params || {};
-        var originalParams = {};
-        for (var param in params) {
-            if (typeof params[param] === 'object' && !(params[param].nodeType || params[param] === window || params[param] === document || (typeof Dom7 !== 'undefined' && params[param] instanceof Dom7) || (typeof jQuery !== 'undefined' && params[param] instanceof jQuery))) {
-                originalParams[param] = {};
-                for (var deepParam in params[param]) {
-                    originalParams[param][deepParam] = params[param][deepParam];
-                }
-            }
-            else {
-                originalParams[param] = params[param];
-            }
-        }
-        for (var def in defaults) {
-            if (typeof params[def] === 'undefined') {
-                params[def] = defaults[def];
-            }
-            else if (typeof params[def] === 'object') {
-                for (var deepDef in defaults[def]) {
-                    if (typeof params[def][deepDef] === 'undefined') {
-                        params[def][deepDef] = defaults[def][deepDef];
-                    }
-                }
-            }
-        }
+        var initialVirtualTranslate = params && params.virtualTranslate;
 
         // SlidePlugin
 		var s = this;
-		// 参数
-        s.params = params;
-        s.originalParams = originalParams;
-        // Classname
+		// ==================初始化参数======================//
+        //获取原始参数
+        s.originalParams = (function () {
+            params = params || {};
+            var originalParams = {};
+            for (var param in params) {
+                if (typeof params[param] === 'object' && !(params[param].nodeType || params[param] === window || params[param] === document || (typeof Dom7 !== 'undefined' && params[param] instanceof Dom7) || (typeof jQuery !== 'undefined' && params[param] instanceof jQuery))) {
+                    originalParams[param] = {};
+                    for (var deepParam in params[param]) {
+                        originalParams[param][deepParam] = params[param][deepParam];
+                    }
+                } else {
+                    originalParams[param] = params[param];
+                }
+            }
+            return originalParams;
+        })();
+        // 合并默认参数及自定义参数
+        s.params = (function () {
+            params = params || {};
+            for (var def in defaults) {
+                if (typeof params[def] === 'undefined') {
+                    params[def] = defaults[def];
+                } else if (typeof params[def] === 'object') {
+                    for (var deepDef in defaults[def]) {
+                        if (typeof params[def][deepDef] === 'undefined') {
+                            params[def][deepDef] = defaults[def][deepDef];
+                        }
+                    }
+                }
+            }
+            return params;
+        })();
+
+
+        // 声明classNames对象
         s.classNames = [];
 
-        // Dom Library and plugins
-        if (typeof $ !== 'undefined' && typeof Dom7 !== 'undefined'){
-            $ = Dom7;
-        }
-        if (typeof $ === 'undefined') {
-            if (typeof Dom7 === 'undefined') {
-                $ = window.Dom7 || window.Zepto || window.jQuery;
-            } else {
+        //存储$至SlidePlugin实例
+        //使用优先级为： Dom7 > Zepto > jQuery
+        s.$ = (function () {
+            if (typeof $ !== 'undefined' && typeof Dom7 !== 'undefined'){
                 $ = Dom7;
             }
-            if (!$) return;
-        }
-
-        // Export it to SlidePlugin instance
-        s.$ = $;
+            if (typeof $ === 'undefined') {
+                if (typeof Dom7 === 'undefined') {
+                    $ = window.Dom7 || window.Zepto || window.jQuery;
+                } else {
+                    $ = Dom7;
+                }
+                if (!$) return;
+            }
+            return $;
+        })();
         
-		/*=========================
-          Breakpoints
-          ===========================*/
+		
+        //=======================视图[Breakpoints]============================//
         s.currentBreakpoint = undefined;
         s.getActiveBreakpoint = function () {
             //Get breakpoint for window width
@@ -97,153 +282,207 @@
                 s.currentBreakpoint = breakpoint;
             }
         };
-
-		// Set breakpoint on load
+		// 加载时候设置breakpoint
         if (s.params.breakpoints) {
             s.setBreakpoint();
         }
 
-	    /*=========================
-         Preparation - Define Container, Wrapper and Pagination
-        ===========================*/
-        s.container = $(container);
-        if (s.container.length === 0) return;
-        if (s.container.length > 1) {
-            s.container.each(function () {
-                new Swiper(this, params);
-            });
-            return;
-        }
-
-		// Save instance in container HTML Element and in data
-		s.container[0].swiper = s;
-        s.container.data('swiper', s);
-        
-        s.classNames.push('swiper-container-' + s.params.direction);
-		if (s.params.freeMode) {
-            s.classNames.push('swiper-container-free-mode');
-        }
-        if (!s.support.flexbox) {
-            s.classNames.push('swiper-container-no-flexbox');
-            s.params.slidesPerColumn = 1;
-        }
-        if (s.params.autoHeight) {
-            s.classNames.push('swiper-container-autoheight');
-        }
-
-		// Enable slides progress when required
-        if (s.params.parallax || s.params.watchSlidesVisibility) {
-            s.params.watchSlidesProgress = true;
-        }
-		// Coverflow / 3D
-        if (['cube', 'coverflow'].indexOf(s.params.effect) >= 0) {
-            if (s.support.transforms3d) {
-                s.params.watchSlidesProgress = true;
-                s.classNames.push('swiper-container-3d');
-            }
-            else {
-                s.params.effect = 'slide';
-            }
-        }
-        if (s.params.effect !== 'slide') {
-            s.classNames.push('swiper-container-' + s.params.effect);
-        }
-        if (s.params.effect === 'cube') {
-            s.params.resistanceRatio = 0;
-            s.params.slidesPerView = 1;
-            s.params.slidesPerColumn = 1;
-            s.params.slidesPerGroup = 1;
-            s.params.centeredSlides = false;
-            s.params.spaceBetween = 0;
-            s.params.virtualTranslate = true;
-            s.params.setWrapperSize = false;
-        }
-        if (s.params.effect === 'fade') {
-            s.params.slidesPerView = 1;
-            s.params.slidesPerColumn = 1;
-            s.params.slidesPerGroup = 1;
-            s.params.watchSlidesProgress = true;
-            s.params.spaceBetween = 0;
-            if (typeof initialVirtualTranslate === 'undefined') {
-                s.params.virtualTranslate = true;
-            }
-        }
-
-		// Grab Cursor
-        if (s.params.grabCursor && s.support.touch) {
-            s.params.grabCursor = false;
-        }
-        
-        // Wrapper
-        s.wrapper = s.container.children('.' + s.params.wrapperClass);
-
-		// Pagination
-        if (s.params.pagination) {
-            s.paginationContainer = $(s.params.pagination);
-            if (s.params.paginationClickable) {
-                s.paginationContainer.addClass('swiper-pagination-clickable');
-            }
-        }
-
-		// Is Horizontal
+        // 是否是水平
         function isH() {
             return s.params.direction === 'horizontal';
         }
 
-		// RTL
-        s.rtl = isH() && (s.container[0].dir.toLowerCase() === 'rtl' || s.container.css('direction') === 'rtl');
-        if (s.rtl) {
-            s.classNames.push('swiper-container-rtl');
-        }
+        //初始化相关参数
+        (function () {
+            //===========定义Container/Wrapper/Pagination=========================//
+            s.container = $(container); //获取容器对象
+            if (s.container.length === 0) return;
+            //当需要操作的容器数量>1时候,为每个容器单独创建一个SlidePlugin实例
+            if (s.container.length > 1) {
+                s.container.each(function () {
+                    new SlidePlugin(this, params);
+                });
+                return;
+            }
 
-		// Wrong RTL support
-        if (s.rtl) {
-            s.wrongRTL = s.wrapper.css('display') === '-webkit-box';
-        }
+            // 将SlidePlugin实例保存起来
+            //s.container[0]为container的dom对象，即将SlidePlugin实例存储在dom对象中
+            s.container[0].SlidePlugin = s;
+            //将SlidePlugin实例存储在$(container)中
+            s.container.data('SlidePlugin', s);
+            s.classNames.push('SlidePlugin-container-' + s.params.direction);
 
-		// Columns
-        if (s.params.slidesPerColumn > 1) {}
-        
-        // Check for Android
-        if (s.device.android) {}
-		// Add classes
-        s.container.addClass(s.classNames.join(' '));
-        
-        // Translate
-        s.translate = 0;
-        
-        // Progress
-        s.progress = 0;
-        
-        // Velocity
-        s.velocity = 0;
+            if (s.params.freeMode) { //自由模式
+                s.classNames.push('SlidePlugin-container-free-mode');
+            }
+            if (!s.support.flexbox) {
+                s.classNames.push('SlidePlugin-container-no-flexbox');
+                s.params.slidesPerColumn = 1;
+            }
+            if (s.params.autoHeight) {
+                s.classNames.push('SlidePlugin-container-autoheight');
+            }
+
+            // Enable slides progress when required
+            if (s.params.parallax || s.params.watchSlidesVisibility) {
+                s.params.watchSlidesProgress = true;
+            }
+            // Coverflow / 3D
+            if (['cube', 'coverflow'].indexOf(s.params.effect) >= 0) {
+                if (s.support.transforms3d) {
+                    s.params.watchSlidesProgress = true;
+                    s.classNames.push('SlidePlugin-container-3d');
+                } else {
+                    s.params.effect = 'slide';
+                }
+            }
+            if (s.params.effect !== 'slide') {
+                s.classNames.push('SlidePlugin-container-' + s.params.effect);
+            }
+            if (s.params.effect === 'cube') {
+                s.params.resistanceRatio = 0;
+                s.params.slidesPerView = 1;
+                s.params.slidesPerColumn = 1;
+                s.params.slidesPerGroup = 1;
+                s.params.centeredSlides = false;
+                s.params.spaceBetween = 0;
+                s.params.virtualTranslate = true;
+                s.params.setWrapperSize = false;
+            }
+            if (s.params.effect === 'fade') {
+                s.params.slidesPerView = 1;
+                s.params.slidesPerColumn = 1;
+                s.params.slidesPerGroup = 1;
+                s.params.watchSlidesProgress = true;
+                s.params.spaceBetween = 0;
+                if (typeof initialVirtualTranslate === 'undefined') {
+                    s.params.virtualTranslate = true;
+                }
+            }
+            // 光标
+            if (s.params.grabCursor && s.support.touch) {
+                s.params.grabCursor = false;
+            }
+            //设置光标
+            if (s.params.grabCursor) {
+                s.container[0].style.cursor = 'move';
+                s.container[0].style.cursor = '-webkit-grab';
+                s.container[0].style.cursor = '-moz-grab';
+                s.container[0].style.cursor = 'grab';
+            }
+
+            // Wrapper
+            s.wrapper = s.container.children('.' + s.params.wrapperClass);
+
+            // Pagination
+            if (s.params.pagination) {
+                s.paginationContainer = $(s.params.pagination);
+                if (s.params.paginationClickable) {
+                    s.paginationContainer.addClass('SlidePlugin-pagination-clickable');
+                }
+            }
+
+            // RTL
+            s.rtl = isH() && (s.container[0].dir.toLowerCase() === 'rtl' || s.container.css('direction') === 'rtl');
+            if (s.rtl) {
+                s.classNames.push('SlidePlugin-container-rtl');
+            }
+
+            // Wrong RTL support
+            if (s.rtl) {
+                s.wrongRTL = s.wrapper.css('display') === '-webkit-box';
+            }
+
+            // Columns
+            if (s.params.slidesPerColumn > 1) {
+                s.classNames.push('SlidePlugin-container-multirow');
+            }
+            
+            // Check for Android
+            if (s.device.android) {
+                s.classNames.push('SlidePlugin-container-android');
+            }
+            // Add classes
+            s.container.addClass(s.classNames.join(' '));
+            
+            // Translate
+            s.translate = 0;
+            
+            // 进度
+            s.progress = 0;
+            
+            // 速度
+            s.velocity = 0;
+        })();
 
         //=================锁定/解锁===============//
-        s.lockSwipeToNext = function () {};
-        s.lockSwipeToPrev = function () {};
-        s.lockSwipes = function () {};
-        s.unlockSwipeToNext = function () {};
-        s.unlockSwipeToPrev = function () {};
-        s.unlockSwipes = function () {};
+        s.lockSwipeToNext = function () {
+            s.params.allowSwipeToNext = false;
+        };
+        s.lockSwipeToPrev = function () {
+            s.params.allowSwipeToPrev = false;
+        };
+        s.lockSwipes = function () {
+            s.params.allowSwipeToNext = s.params.allowSwipeToPrev = false;
+        };
+        s.unlockSwipeToNext = function () {
+            s.params.allowSwipeToNext = true;
+        };
+        s.unlockSwipeToPrev = function () {
+            s.params.allowSwipeToPrev = true;
+        };
+        s.unlockSwipes = function () {
+            s.params.allowSwipeToNext = s.params.allowSwipeToPrev = true;
+        };
 
         //=================四舍五入===============//
         function round(a) {
             return Math.floor(a);
         }
 
-        //=================设置光标===============//
-        if (s.params.grabCursor) {
-            s.container[0].style.cursor = 'move';
-            s.container[0].style.cursor = '-webkit-grab';
-            s.container[0].style.cursor = '-moz-grab';
-            s.container[0].style.cursor = 'grab';
-        }
-
         //=================图片加载===============//
         s.imagesToLoad = [];
         s.imagesLoaded = 0;
-        s.loadImage = function (imgElement, src, srcset, checkForComplete, callback) {};
-        s.preloadImages = function () {};
+        //加载图片方法
+        s.loadImage = function (imgElement, src, srcset, checkForComplete, callback) {
+            var image;
+            function onReady () {
+                if(callback) callback();
+            }
+            if (!imgElement.complete || !checkForComplete) {
+                if (src) {
+                   image = new window.Image();
+                   image.onload = onReady; 
+                   image.onerror = onReady;
+                   if (srcset) {
+                        image.srcset = srcset;
+                   }
+                   if (src) {
+                        image.src = src;
+                   }
+                } else {
+                    onReady();
+                }
+            } else { // 图片已经加载完
+                onReady();
+            }
+        };
+        //图片预加载
+        s.preloadImages = function () {
+            s.imagesToLoad = s.container.find('img'); // 获取所有图片
+            function _onReady() {
+                if(typeof s === 'undefined' || s === null) return;
+                if(s.imagesLoaded !== undefined) s.imagesLoaded++;
+                if(s.imagesLoaded === s.imagesToLoad.length) { // 图片加载完毕
+                    if(s.params.updateOnImagesReady) s.update();
+                    s.emit('onImagesReady', s); //广播图片加载完成消息
+                }
+            }
+            //遍历所有图片
+            for(var i = 0; i < s.imagesToLoad.length; i++) {
+                s.loadImage(s.imagesToLoad[i], (s.imagesToLoad[i].currentSrc || s.imagesToLoad[i].getAttribute('src')), (s.imagesToLoad[i].srcset || s.imagesToLoad[i].getAttribute('srcset')), true, _onReady)
+            }
+        };
 
         //=================自动运行===============//
         s.autoplayTimeoutId = undefined;
