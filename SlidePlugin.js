@@ -1032,24 +1032,89 @@
         	var moveCapture = s.params.nested ? true : false;
 
         	// touch 事件
+            //touchEventsTarget[action] 表示获取dom对象对象的action方法
+            //如：addEventListener() {...}, removeEventListener() {...}
         	if (s.browser.ie) {
         		touchEventsTarget[action](s.touchEvents.start, s.onTouchStart, false);
         		target[action](s.touchEvents.move, s.onTouchMove, moveCapture);
         		target[action](s.touchEvents.end, s.onTouchEnd, false);
-        	}
+        	} else {
+                if (s.support.touch) {
+                    //绑定/解绑touchstart事件
+                    touchEventsTarget[action](s.touchEvents.start, s.onTouchStart, false);
+                    //绑定/解绑touchmove事件
+                    touchEventsTarget[action](s.touchEvents.move, s.onTouchMove, moveCapture);
+                    //绑定/解绑touchend事件
+                    touchEventsTarget[action](s.touchEvents.end, s.onTouchEnd, false);
+                }
+                //模拟touch事件
+                //mousedown作为touchstart, mousemove-->touchmove, mouseup--->touchend
+                if (params.simulateTouch && !s.device.ios && !s.device.android) {
+                    touchEventsTarget[action]('mousedown', s.onTouchStart, false);
+                    document[action]('mousemove', s.onTouchMove, moveCapture);
+                    document[action]('mouseup', s.onTouchEnd, false);
+                }
+            }
+            //给window加上/移除resuze事件
+            window[action]('resize', s.onResize);
+
+            // 上一页/下一页/index
+            if (s.params.nextButton) {
+                $(s.params.nextButton)[actionDom]('click', s.onClickNext);
+                if (s.params.a11y && s.a11y) $(s.params.nextButton)[actionDom]('keydown', s.a11y.onEnterKey);
+            }
+            if (s.params.prevButton) {
+                $(s.params.prevButton)[actionDom]('click', s.onClickPrev);
+                if (s.params.a11y && s.a11y) $(s.params.prevButton)[actionDom]('keydown', s.a11y.onEnterKey);
+            }
+            if (s.params.pagination && s.params.paginationClickable) {
+                $(s.paginationContainer)[actionDom]('click', '.' + s.params.bulletClass, s.onClickIndex);
+                if (s.params.a11y && s.a11y) $(s.paginationContainer)[actionDom]('keydown', '.' + s.params.bulletClass, s.a11y.onEnterKey);
+            }
+
+            //Prevent Links Clicks
+            if (s.params.preventClicks || s.params.preventClicksPropagation) touchEventsTarget[action]('click', s.preventClicks, true);
         };
-        s.attachEvents = function (detach) {};
-        s.detachEvents = function () {};
+        s.attachEvents = function (detach) {
+            //绑定事件
+            s.initEvents();
+        };
+        s.detachEvents = function () {
+            //解绑事件
+            s.initEvents(true);
+        };
 
         //=================Handle clicks===============//
         s.allowClick = true;
-        s.preventClicks = function (e) {};
-        s.onClickNext = function (e) {};
-        s.onClickPrev = function (e) {};
-        s.onClickIndex = function (e) {};
+        s.preventClicks = function (e) {
+            if(!s.allowClick) {
+                if (s.params.preventClicks) e.preventDefault(); //取消事件的默认动作
+                if (s.params.preventClicksPropagation && s.animating) {
+                    e.stopPropagation(); //不再派发事件。停止事件的传播
+                    e.stopImmediatePropagation();
+                }
+            }
+        };
+        s.onClickNext = function (e) {
+            e.preventDefault(); //取消事件的默认动作
+            if (s.isEnd && !s.params.loop) return;
+            s.slideNext(); //进入下一屏
+        };
+        s.onClickPrev = function (e) {
+            e.preventDefault(); //取消事件的默认动作
+            if (s.isBeginning && !s.params.loop) return;
+            s.slidePrev(); //进入上一屏
+        };
+        s.onClickIndex = function (e) {
+            e.preventDefault();
+            var index = $(this).index() * s.params.slidesPerGroup;
+            if (s.params.loop) index = index + s.loopedSlides;
+            s.slideTo(index);
+        };
 
         //=================Handle Touches===============//
-        function findElementInEvent(e, selector) {};
+        function findElementInEvent(e, selector) {
+        };
         s.updateClickedSlide = function (e) {};
         var isTouched,
         	isMoved,
