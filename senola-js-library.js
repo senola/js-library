@@ -314,6 +314,21 @@ var senolaUtils = {
             }
         } 
         return cancelAnimationFrame;
+     },
+     /**
+      *  为String添加format方法，类似C#中的String.Format()方法一样
+      *  用发：
+      *   "时间：{0}, 地点{1}".format("2016年3月3日", "公司");
+      *   输出： 时间：2016年3月3日, 地点公司
+      */
+     addFormatForString: function() {
+     	if (!String.prototype.format) {
+		  String.prototype.format = function() {
+		    var args = arguments;
+		    return this.replace(/{(\d+)}/g, function(match, number) { 
+		      return typeof args[number] != 'undefined' ? args[number] : match;
+		    });
+		  };
+		}
      }
-
 }
