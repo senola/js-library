@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 	<meta charset="utf-8">
+</head>
+<style type="text/css">
+	div {display:inline-block; margin-left: 10px;}
+</style>
+<body>
+	 <div style="position: absolute;display:block; width: 90%; height: 100% ">
+	 	<canvas id="clock"></canvas>
+	 </div>
+     <div style="width: 400px; height: 400px; ">
+     	<canvas id="clock1"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock2"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock3"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock4"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock5"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock6"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock7"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock8"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock9"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock10"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock11"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock12"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock13"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock14"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock15"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock16"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock17"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock18"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock19"></canvas>
+     </div>
+     <div style="width: 400px; height: 400px;">
+     	<canvas id="clock20"></canvas>
+     </div>
+</body>
+<script src="clock.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var options = {
+    	markerType: "numeral", // number、numeral、dot、none
+    	rim: 2
+    }
+    var clock = new Clock("clock");
+    clock.start();
+    var clockFactory = new ClockFactory();
+    for(var i = 1; i < 20; i++) {
+    	clockFactory.createClock("clock" + i, options);
+    }
+    clockFactory.start();
+</script>
+</html>

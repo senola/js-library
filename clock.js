@@ -19,13 +19,16 @@
 		c.started = false;
 		//默认的参数
 		var defaults = {
-			romanNum: [0,"I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"],  
+			romanNumerals: [0,"I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"],  
 			radius: function() { //半径，默认为宽高最小值的一半
 				return Math.min(c.canvas.height, c.canvas.width) / 2
 			},
 			color: "rgba(255, 0, 0, .2)",
-			rim: function() { //
+			rim: function() { //圆环
 				return getValue("radius") * 0.2; 
+			},
+			rimColour: function(){ 
+				return getValue("color"); 
 			},
 			x: function() {
 				return c.canvas.width / 2;
@@ -34,39 +37,62 @@
 				return c.canvas.height / 2;
 			},
 			lineColor: function() {
-				return c.defaults.color;
+				return getValue("color");
 			},
 			fillColor: function() {
-				return c.defaults.color;
+				return getValue("color") ;
 			},
 			lineWidth: 1,
 			centreCircle: true,
 			addHours: 0,
 			addMinutes: 0,
-			addSeconds: 0
+			addSeconds: 0,
+			directionCoefficient: 1,
+			centreCircle: true,
+			centreCircleRadius: function(){ 
+				return getValue("radius") * 0.03; 
+			},
+			centreCircleColour: function(){
+				return getValue("colour");
+			},
+			centreCircleCutout: function(){ 
+				return getValue("radius") * 0.01; 
+			},
+			markerDisplay: true, //是否显示时标
+			markerType: "number", // number、numeral、dot、none
+			markerColour: function(){ 
+				return defaults.colour; 
+			},
+			markerSize: function(){ 
+				return getValue("radius") * 0.02; 
+			},
+			markerDistance: function(){ 
+				return getValue("radius") * 0.9; 
+			},
+			colorChange: true
 		};
 
 		//初始化参数 
-		params = params || {}; //自定义参数
+		c.params = params || {}; //自定义参数
 		var originalParams = {}; //原始参数
-		for (var param in params) {
-            if (typeof params[param] === 'object' && !(params[param].nodeType || params[param] === window || params[param] === document)) {
+		for (var param in c.params) {
+            if (typeof c.params[param] === 'object' && !(c.params[param].nodeType || c.params[param] === window || c.params[param] === document)) {
                 originalParams[param] = {};
                 for (var deepParam in params[param]) {
-                    originalParams[param][deepParam] = params[param][deepParam];
+                    originalParams[param][deepParam] = c.params[param][deepParam];
                 }
             } else {
-                originalParams[param] = params[param];
+                originalParams[param] = c.params[param];
             }
         }
         //合并原始参数和自定义参数
         for (var def in defaults) {
-            if (typeof params[def] === 'undefined') {
-                params[def] = defaults[def];
-            } else if (typeof params[def] === 'object') {
+            if (typeof c.params[def] === 'undefined') {
+                c.params[def] = defaults[def];
+            } else if (typeof c.params[def] === 'object') {
                 for (var deepDef in defaults[def]) {
-                    if (typeof params[def][deepDef] === 'undefined') {
-                        params[def][deepDef] = defaults[def][deepDef];
+                    if (typeof c.params[def][deepDef] === 'undefined') {
+                        c.params[def][deepDef] = defaults[def][deepDef];
                     }
                 }
             }
@@ -78,38 +104,49 @@
 				length: 1,
 				width: 0.1,
 				percentile: function() {
-					return (currentDate.getSeconds() + currentDate.getMilliseconds() / 1000) / 60;
+					return (c.currentDate.getSeconds() + c.currentDate.getMilliseconds() / 1000) / 60;
 				}
 			},
 			minuteHand: {
 				length: 0.8,
 				width: 0.4,
 				percentile: function() {
-					return (currentDate.getMinutes() + currentDate.getSeconds() / 60) / 60;
+					return (c.currentDate.getMinutes() + c.currentDate.getSeconds() / 60) / 60;
 				}
 			},
 			hourHand: {
 				length: 0.5,
 				width: 0.9,
 				percentile: function() {
-					return (currentDate.getHours() + currentDate.getMinutes() / 60) / 12;
+					return (c.currentDate.getHours() + c.currentDate.getMinutes() / 60) / 12;
 				}
 			}
 		}
 		//动态获取函数值 
 		var getValue = function(funcName, defaultFuncName) {
-			if(typeof c.defaults[funcName] === "function") {
-				var result = c.defaults[funcName]();
+			if(typeof c.params[funcName] === "function") {
+				var result = c.params[funcName]();
 				if(result != null) {
 					return result;
 			    }
 			    if(typeof defaultFuncName == "function"){
 					return defaultFuncName();
 				}
-				return (typeof c.defaults[defaultFuncName] == "function") ? c.defaults[defaultFuncName]() : c.defaults[defaultFuncName];
+				return (typeof c.params[defaultFuncName] == "function") ? c.params[defaultFuncName]() : c.params[defaultFuncName];
 			} else {
-				return c.defaults[funcName];
+				return c.params[funcName];
 			}
+		}
+		//获取【down, up】之间的随机整数
+		var getRandomNum = function(down, up) {
+		   switch (arguments.length) { //传入的参数个数
+		      case 1: 
+		          return parseInt(Math.random() * down + 1); // 获取[0,down)间的随机数
+		      case 2:
+		          return parseInt(Math.random() * (up - down + 1) + down); //获取[down,up] 之间的随机数
+		      default: 
+		          return 0; 
+		   }
 		}
 		//draw hand
 		var drawHand = function(x, y, radius, theta, lineWidth) {
@@ -119,7 +156,7 @@
 			var offAmount = (lineWidth != null) ? lineWidth : 0.5;
 			var one = {
 				x: x + 2 * radius / 8 * Math.cos(theta + offAmount),
-				y: y + 2 * radius / 8 * Math.sin(theta + offAmount)}
+				y: y + 2 * radius / 8 * Math.sin(theta + offAmount)
 			};
 			var two = {
 				x: x,
@@ -136,19 +173,66 @@
  			c.context.stroke();
  			c.context.fill();
  			c.context.lineWidth = 1;
-		};
+		}
+		//draw maker
+		var drawMarker = function(x, y, i){
+			c.context.beginPath();
+			c.context.fillStyle = getValue("markerColour", "colour");
+			var markerSize = getValue("markerSize");
 
-		var drawMaker = function(x, y, i){
+			switch (getValue("markerType")) {
+				case "numeral":
+					markerSize *= 4;
+					c.context.font = markerSize + "px sans-serif";
+					c.context.textAlign = "center";
+					c.context.fillStyle = getValue("markerColour");
+					c.context.textBaseline = "middle";
+					c.context.fillText(c.params.romanNumerals[i + 1], x, y);
+					break;
+				case "number":
+					markerSize *= 4;
+					c.context.font = markerSize + "px sans-serif";
+					c.context.textAlign = "center";
+					c.context.fillStyle = getValue("markerColour");
+					c.context.textBaseline = "middle";
+					c.context.fillText(i + 1, x, y);
+					break;
+				case "dot":
+					c.context.arc(x, y, markerSize, 0, 2 * Math.PI);
+					c.context.fill();
+				    break;
+				case "none":
+				    break;
+				default:
+					break;
+			}
+		}
+		// draw markers
+		var drawMarkers = function(x, y) {
+			if(getValue("markerDisplay") == false) return;
 
-		};
-		var drawMakers = function(x, y) {
-
-		};
+			var directionCoefficient = getValue("directionCoefficient");
+			var markerDistance = getValue("markerDistance");
+			var theta = directionCoefficient * 2 * Math.PI / 12 - Math.PI / 2;
+			for(var i = 0; i < 12; i++) {
+				var markerX =	x + markerDistance * Math.cos(theta);
+				var markerY = y + markerDistance * Math.sin(theta);
+				drawMarker(markerX, markerY, i);
+				theta += directionCoefficient * 2 * Math.PI / 12;
+			}
+		}
+		//update date
 		var updateDate = function() {
-
+			c.currentDate = new Date(); 
+			c.addHours(c.currentDate, getValue("addHours", function(){return 0;}));
+			c.addMinutes(c.currentDate, getValue("addMinutes", function(){return 0;}));
+		    c.addSeconds(c.currentDate, getValue("addSeconds", function(){return 0;}));
 		};
 		//draw
 		c.draw = function() {
+			if(getValue("colorChange")) {
+				c.params.color = "rgba(" + 255 + "," + 200 + "," + getRandomNum(0, 255) + ", ." + getRandomNum(1, 9) + ")";
+			}
 			// canvas 默认充满整个父类标签
 			c.canvas.height = c.canvas.parentNode.offsetHeight;
 			c.canvas.width  = c.canvas.parentNode.offsetWidth;
@@ -157,12 +241,53 @@
 			var y = getValue("y");
 			//清空
 			c.context.clearRect(0,0, c.canvas.width, c.canvas.height);
+
+			//画圆环
+			c.context.strokeStyle = getValue("rimColour");
+			c.context.lineWidth = getValue("rim");
+			c.context.beginPath();
+			c.context.arc(x, y, radius - getValue("rim") / 2, 0, 2 * Math.PI);
+			c.context.stroke();
+
+			c.context.strokeStyle = getValue("lineColour");
+			c.context.fillStyle = getValue("fillColour");
+			c.context.lineWidth = getValue("lineWidth");
+
+			//markers
+			drawMarkers(x, y);
+
+			//update date
+			updateDate();
+
+			var directionCoefficient = getValue("directionCoefficient", function() {return 1;});
+
+			// draw hand
+			for(var key in c.hands) {
+				if(c.hands.hasOwnProperty(key)) {
+					var tempTheta = directionCoefficient * c.hands[key].percentile() * 2 * Math.PI - Math.PI / 2;
+					var tempRadius = radius * c.hands[key].length;
+					drawHand(x, y, tempRadius, tempTheta, c.hands[key].width);
+				}
+			}
+
+			//centreCircle
+			c.context.beginPath();
+			c.context.fillStyle = getValue("centreCircleColour", "colour");
+			c.context.arc(x, y, getValue("centreCircleRadius"), 0, 2 * Math.PI);
+			c.context.fill();
+			c.context.stroke();
+			
+			//cutout
+			c.context.beginPath();
+			c.context.arc(x, y, getValue("centreCircleCutout"), 0, 2 * Math.PI);
+			c.context.clip();
+			c.context.clearRect(0, 0, c.canvas.width, c.canvas.height);
 		};
 		//animate
 		c.animate = function() {
 			if(!c.started) return;
 			c.draw();
-			c.getRequestAnimationFrame(c.animate);
+			c.requestAnimationFrame(c.animate);
 		};
 		//start
 		c.start = function() {
@@ -175,32 +300,83 @@
 		};
 		//return
 		return c;
-	}
+	};
 	//============================//
 	// Clock 原型(Prototype),提供一些公用方法
 	//============================//
 	Clock.prototype = {
-		addHours : function(){
-
+		addHours : function(d, h){
+			d.setHours(d.getHours() + h);
 		},
-		addMinutes: function() {
-
+		addMinutes: function(d, m) {
+			d.setMinutes(d.getMinutes() + m);
 		},
-		addSeconds: function() {
-			
+		addSeconds: function(d,s) {
+			d.setSeconds(d.getSeconds() + s);
 		},
-		getRequestAnimationFrame: function() {
+		requestAnimationFrame: function(fn) {
 	        var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 	        if(requestAnimationFrame == null) {
 	            requestAnimationFrame = function(fn) {
 	               setTimeout(fn, 50);
 	            }
 	        }
-	        return requestAnimationFrame;
+	        return requestAnimationFrame(fn);
        }
 	}
+	//============================//
+	// ClockCreator
+	//============================//
+	var ClockFactory = function() {
+		var factory = this;
+		factory.started = false;
 
+		factory.clocks = [];
+
+		factory.createClock = function(clockItem, options) {
+			if(typeof clockItem === "string") {
+				clockItem = new Clock(clockItem, options);
+			}
+			factory.clocks.push({
+				clock: clockItem, 
+				started: true
+			});
+		}
+
+		factory.draw = function() {
+			for(var i in factory.clocks) {
+				var currentClock = factory.clocks[i];
+				if(currentClock.started == true){
+					currentClock.clock.draw();
+				}
+			}
+		}
+
+		factory.animate = function() {
+			if(factory.started == false){
+				return;
+			}
+			
+			factory.draw();
+			
+			factory.clocks[0].clock.requestAnimationFrame(factory.animate);
+		}
+		factory.start = function() {
+			factory.started = true;
+			for(var i in factory.clocks){
+				var currentClock = factory.clocks[i];
+				currentClock.started = true;
+			}
+			
+			factory.animate();
+		}
+		factory.stop = function(){
+			factory.started = false;
+		}
+		return factory;
+	}
 	window.Clock = Clock; // 定义Clock对象为全局对象
+	window.ClockFactory = ClockFactory; // 定义Clock对象为全局对象
 })();
 
 //============================//
